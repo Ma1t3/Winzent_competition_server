@@ -1,0 +1,242 @@
+{% extends 'base.html' %}
+
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block title %}Agent {{ agent.name }} | PG-ASC Competition Server{% endblock %}
+
+{% block content %}
+    <div class="container p-5">
+        <div class="row">
+            <div class="d-flex" style="flex-basis:80%;">
+                <h1>Agent: {{ agent.name }}&NonBreakingSpace;{% if agent.is_public %} <i
+                        class="bi bi-globe2"></i> {% endif %}</h1>
+            </div>
+            <div class="d-flex" style="flex-basis:20%; justify-content: flex-end; align-items: flex-start">
+
+                {% if user.is_authenticated and agent.is_public or user.id == agent.owner_id %}
+                    <!-- Option-Dropdown-Menu -->
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                                aria-expanded="false">
+                            Options
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <form action="{% url 'pgasc.web.agentsystemmanagement:agent_download' agent.id %}"
+                                      method="post">
+                                    <button class="dropdown-item">
+                                        {% csrf_token %}
+                                        Download
+                                    </button>
+                                </form>
+                            </li>
+                            {% if user.is_authenticated and user.id == agent.owner_id %}
+                                <li>
+                                    <hr class="dropdown-divider">
+                                </li>
+                                <li>
+                                    <form onclick="return confirm('Are you sure you want to delete this?')"
+                                          action="{% url 'pgasc.web.agentsystemmanagement:delete' agent.id %}"
+                                          method="post">
+                                        {% csrf_token %}
+                                        <button class="dropdown-item" style="color: red">
+                                            Delete Agent
+                                        </button>
+                                    </form>
+                                </li>
+                            {% endif %}
+                        </ul>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        <!-- Tab-bar -->
+        <div class="container p-3">
+            <div class="row" style="margin-top: 20px;">
+                <nav>
+                    <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                        <button class="nav-link active" id="nav-summary-tab" data-bs-toggle="tab"
+                                data-bs-target="#nav-summary"
+                                type="button" role="tab" aria-controls="nav-summary" aria-selected="true">Summary
+                        </button>
+                        <button class="nav-link" id="nav-yaml-tab" data-bs-toggle="tab" data-bs-target="#nav-yaml"
+                                type="button" role="tab" aria-controls="nav-yaml" aria-selected="false">Agent YAML
+                        </button>
+                        <button class="nav-link" id="nav-files-tab" data-bs-toggle="tab" data-bs-target="#nav-files"
+                                type="button" role="tab" aria-controls="nav-files" aria-selected="false">Files
+                        </button>
+                    </div>
+                </nav>
+            </div>
+
+
+            <div class="row">
+                <div class="tab-content" id="nav-tabContent">
+
+                    <!-- Tab: Summary -->
+                    <div class="tab-pane fade show active" id="nav-summary" role="tabpanel"
+                         aria-labelledby="nav-summary-tab">
+                        <div class="row" style="margin-top: 20px; margin-left: 15px;">
+                            <h3>Agent-Details</h3>
+                        </div>
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="d-flex" style="flex-basis:20%; justify-content: flex-end;">
+                                created by:
+                            </div>
+                            <div class="d-flex" style="flex-basis:80%; text-align: left;">
+                                {% if agent.owner == user %} you {% else %} {{ agent.owner }} {% endif %}
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="d-flex" style="flex-basis:20%; justify-content: flex-end;">
+                                created on:
+                            </div>
+                            <div class="d-flex" style="flex-basis:80%; text-align: left;">
+                                {{ agent.upload_timestamp | date:'d.m.Y H:i' }}
+                            </div>
+                        </div>
+
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="d-flex" style="flex-basis:20%; justify-content: flex-end;">
+                                role:
+                            </div>
+                            <div class="d-flex" style="flex-basis:80%; text-align: left;">
+                                {% if agent.role == "D" or agent.role == "B" %}
+                                    <div class="col-2">
+                                        <p class="text-center" style="margin-bottom: 0px;"><i class="bi bi-shield"
+                                                                                              style="font-size: 3em;"></i>
+                                        </p>
+                                        <p class="text-center">Defender</p>
+                                    </div>
+                                {% endif %}
+
+                                {% if agent.role == "A" or agent.role == "B" %}
+                                    <div class="col-2">
+                                        <p class="text-center" style="margin-bottom: 0px;"><i class="bi bi-hammer"
+                                                                                              style="font-size: 3em;"></i>
+                                        </p>
+                                        <p class="text-center">Attacker</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        {% if agent.trained_by %}
+                            <div class="row" style="margin-top: 20px;">
+                                <div class="d-flex" style="flex-basis:20%; justify-content: flex-end;">
+                                    Trained by:
+                                </div>
+                                <div class="d-flex" style="flex-basis:80%; text-align: left;">
+                                    {% if agent.trained_by.owner == user or agent.trained_by.is_public %}
+                                        <a href="{% url 'experimentdefinitionmanagement:experiment_details' agent.trained_by.pk %}"
+                                           style="color: black; text-decoration: none;">
+                                            {{ agent.trained_by.name }}
+                                            {% if agent.trained_by.is_public == True %}
+                                                <i class="bi bi-globe2"></i>
+                                            {% endif %}
+                                        </a>
+                                    {% else %}
+                                        Private Experiment
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endif %}
+
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="d-flex" style="flex-basis:20%; justify-content: flex-end;">
+                                Description:
+                            </div>
+                            <div class="d-flex" style="flex-basis:80%; text-align: left;">
+                                {% if agent.description %} {{ agent.description }} {% else %} <i
+                                        class="text-secondary">none</i> {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Agent YAML -->
+                    <div class="tab-pane fade" id="nav-yaml" role="tabpanel" aria-labelledby="nav-yaml-tab">
+                        <div class="row" style="margin-top: 20px; margin-left: 15px;">
+                            <h3>Agent YAML for Competitions</h3>
+                        </div>
+
+                        <div class="row" style="margin-left: 15px; margin-right: 15px;">
+                            {% if init_yml_form %}
+                                <form id="change_agent_yml_form" method="post"
+                                      action="{% url 'pgasc.web.agentsystemmanagement:agent_detail' agent.id %}">
+                                    {% csrf_token %}
+                                    {{ init_yml_form|crispy }}
+                                    <button type="submit" class="btn btn-primary">Save</button>
+                                </form>
+                                {% if not agent.path_brain_is_correct %}
+                                    <div style="color: red;">
+                                        The specified Brain paths is not correct.
+                                    </div>
+                                {% endif %}
+                                {% if not agent.path_muscle_is_correct %}
+                                    <div style="color: red;">
+                                        The specified Muscle paths is not correct.
+                                    </div>
+                                {% endif %}
+                                {% if not agent.path_objective_is_correct %}
+                                    <div style="color: red;">
+                                        The specified Objective paths is not correct.
+                                    </div>
+                                {% endif %}
+                            {% else %}
+                                <pre class="h-100 w-100"><code class="language-yaml">{{ agent.init_yml }}</code></pre>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Tab: Files -->
+                    <div class="tab-pane fade" id="nav-files" role="tabpanel" aria-labelledby="nav-files-tab">
+                        <div class="row" style="margin-top: 20px; margin-left: 15px;">
+                            <h3>Agent-Files</h3>
+                        </div>
+
+                        <div class="row" style="margin-top: 20px;">
+                            <div class="d-flex" style="flex-basis:20%; justify-content: flex-end;">
+                                Directory:
+                            </div>
+                            <div class="d-flex" style="flex-basis:80%; text-align: left;">
+                                <ul>
+                                    {% include "filelist_recursive.html" %}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js_block %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script type="application/javascript" src="{% static 'javascript/preserve_active_tab_on_reload.js' %}"
+            defer></script>
+    <script>
+        $(document).ready(function () {
+            preserveActiveTabOnReload();
+        });
+    </script>
+    {% if init_yml_form %}
+        <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.8.1/ace.js" type="text/javascript" charset="utf-8"></script>
+        <script type="application/javascript" src="{% static 'javascript/ace_code_editor.js' %}" defer></script>
+        <script type="application/javascript" src="{% static 'javascript/error_messages.js' %}" defer></script>
+        <script type="application/javascript" src="{% static 'javascript/drag_and_drop_yml.js' %}" defer></script>
+        <script>
+            $(document).ready(function () {
+                const textarea = $('#id_yml');
+                const form = $('#change_agent_yml_form');
+                showCodeEditor(textarea, form);
+                addYamlDragAndDrop("hint_id_yml");
+            });
+        </script>
+    {% endif %}
+{% endblock %}
+
+

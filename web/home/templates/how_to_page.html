@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}How To | PG-ASC Competition Server{% endblock %}
+
+{% block content %}
+    <div class="container p-5">
+
+        <div>
+            {% include "how_to_generated.html" %}
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block js_block %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/11.5.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
+{% endblock %}

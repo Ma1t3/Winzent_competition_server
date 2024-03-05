@@ -1,0 +1,29 @@
+# config file version
+apiVersion: 1
+
+datasources:
+  - name: PGASCExperimentResult
+    type: postgres
+    orgId: 1
+    access: direct
+    url: $MIDAS_DB_HOST:$MIDAS_DB_PORT
+    user: $MIDAS_DB_USER
+    database: $MIDAS_DB_NAME
+    isDefault: true
+    editable: true
+    secureJsonData:
+      password: $MIDAS_DB_PASSWORD
+    jsonData:
+      sslmode: "disable"
+  - name: PalaestraiDB
+    type: postgres
+    orgId: 1
+    access: direct
+    url: $PALAESTRAI_DB_HOST:$PALAESTRAI_DB_PORT
+    user: $PALAESTRAI_DB_USER
+    database: $PALAESTRAI_DB_NAME
+    editable: true
+    secureJsonData:
+      password: $PALAESTRAI_DB_PASSWORD
+    jsonData:
+      sslmode: "disable"

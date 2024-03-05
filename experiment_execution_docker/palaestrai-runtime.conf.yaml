@@ -1,0 +1,43 @@
+executor_bus_port: 4242
+logger_port: 4243
+logging:
+  filters:
+    debug_filter: { (): palaestrai.core.runtime_config.DebugLogFilter }
+  formatters:
+    debug: { format: '%(asctime)s %(name)s[%(process)d]: %(levelname)s - %(message)s
+        (%(module)s.%(funcName)s in %(filename)s:%(lineno)d)' }
+    simple: { format: '%(asctime)s %(name)s[%(process)d]: %(levelname)s - %(message)s' }
+  handlers:
+    console: { class: logging.StreamHandler, formatter: simple, level: INFO, stream: 'ext://sys.stdout' }
+    console_debug:
+      class: logging.StreamHandler
+      filters: [ debug_filter ]
+      formatter: debug
+      level: DEBUG
+      stream: ext://sys.stdout
+  loggers:
+    palaestrai: { level: DEBUG }
+    palaestrai.agent: { level: ERROR }
+    palaestrai.agent.agent_conductor: { level: ERROR }
+    palaestrai.agent.brain: { level: ERROR }
+    palaestrai.agent.muscle: { level: ERROR }
+    palaestrai.core: { level: ERROR }
+    palaestrai.environment: { level: ERROR }
+    palaestrai.experiment: { level: ERROR }
+    palaestrai.simulation: { level: ERROR }
+    palaestrai.store: { level: ERROR }
+    palaestrai.types: { level: ERROR }
+    palaestrai.util: { level: ERROR }
+    palaestrai.visualization: { level: ERROR }
+    sqlalchemy.engine: { level: ERROR }
+    mango: { level: ERROR }
+    pgasc: { level: INFO }
+    mango_library.negotiation.winzent: { level: INFO }
+  root:
+    handlers: [ console, console_debug ]
+    level: ERROR
+  version: 1
+major_domo_client_retries: 3
+major_domo_client_timeout: 300000
+profile: false
+public_bind: false

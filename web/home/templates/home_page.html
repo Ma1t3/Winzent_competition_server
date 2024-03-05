@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}PG-ASC Competition Server{% endblock %}
+{% block custom_style %}
+    <link href="{% static 'css/home.css' %}" rel=stylesheet>
+{% endblock %}
+
+{% block content %}
+    <div class="container" style="margin: 0;padding:0;">
+        <img src="{% static '/images/tokio.gif' %}" alt="Background image"
+             style="width: 100%; height: 100vh; opacity: 0.7;">
+        <div class="centered"><h1>PG-ASC Competition Server</h1></div>
+        <div class="instruction">
+            <p style="margin-bottom: 50px">
+                Welcome to Agent System Competition Server. It is developed by the project group "Agent
+                System Competition" (PG-ASC) at the University of Oldenburg. The purpose of this server is
+                to provide a platform for evaluating the performance of agent systems for managing a power
+                grid in experiments and competitions. The implementation of the server is build on top of
+                the <a href="https://www.offis.de/palaestrai.html">palaestrAI</a> framework. To provide a
+                realistic power grid simulation, the server uses the <a
+                    href="https://gitlab.com/midas-mosaik/midas">MIDAS</a> framework which is build on the
+                Smart Grid co-simulation framework <a href="https://mosaik.offis.de/">mosaik</a>. If you are
+                new to the server, please read the <a href="{% url 'howto' %}">How-To-Page</a> first. You
+                can see public agent systems, experiments and competitions without logging in. To upload
+                your own agent systems and use them in experiments or to compare them in competitions you
+                need to create an account.
+            <p>
+            <div class="row">
+                <div class="col">
+                    {% if user.is_authenticated %}
+                        <a class="btn btn-outline-light" style="min-width: 200px;"
+                           href="{% url 'pgasc.web.agentsystemmanagement:agent_list' %}">View Agents</a>
+                        <a class="btn btn-outline-light" style="min-width: 200px;"
+                           href="{% url 'experimentdefinitionmanagement:experimentlist' %}">Explore Experiments</a>
+                    {% else %}
+                        <a class="btn btn-outline-light" style="min-width: 200px;"
+                           href="{% url 'login' %}">Login</a>
+                        <a class="btn btn-outline-light" style="min-width: 200px;"
+                           href="{% url 'register' %}">Create a New Account</a>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="row">
+                <div class="col" style="margin: 50px">
+                    <p>Currently <strong>{{ enqueued_count }}</strong>
+                        Experiment{% if enqueued_count != 1 %}s{% endif %} pending and
+                        <strong>{{ running_count }}</strong>
+                        Experiment{% if running_count != 1 %}s{% endif %} running.</p>
+                </div>
+            </div>
+
+            {% if dev_mode %}
+                <div class="row">
+                    <div class="col">
+                        <p>
+                            Website Development Mode is enabled.
+                        </p>
+                        {% if last_commit_hash %}
+                            <p>
+                                Last commit: {{ last_commit_hash }} on {{ last_commit_date }}
+                            </p>
+                        {% endif %}
+                        <a class="btn btn-outline-light mt-2" style="min-width: 200px;"
+                           href="{% url 'testuser_login' %}">Log in with test user (Debugging Purposes)</a>
+                    </div>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,15 @@
+# Agent YML: only used in Competitions
+brain:
+  # HERE you can change the brain path and params of your uploaded agent
+  name: dummy_brain:DummyBrain
+  params: { "key": "value" }
+muscle:
+  # HERE you can change the muscle path and params of your uploaded agent
+  name: dummy_muscle:DummyMuscle
+  params: { }
+objective:
+  # HERE you can change the objective and params path of your uploaded agent
+  name: dummy_objective:DummyObjective
+  params: { }
+sensors: [ ] # HERE you can add the sensors you want to use for the competition
+actuators: [ ] # HERE you can add the actuators you want to use for the competition

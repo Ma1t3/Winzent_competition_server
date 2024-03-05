@@ -1,0 +1,73 @@
+uid: "Example ERD with PPO (without sensors and actuators)"
+seed: 123
+version: 3.4.0
+schedule:
+  - the_only_phase:
+      environments:
+        - environment:
+            name: palaestrai_mosaik:MosaikEnvironment
+            uid: env
+            params:
+              module: midas.adapter.palaestrai:Descriptor
+              description_func: describe
+              instance_func: get_world
+              step_size: &step_size 900
+              end: &end 24*60*60
+              rating_function: pgasc.midas.analyze.rating_functions.default_rating_function.DefaultRatingFunction
+              write_in_midas_db: True
+              scenario: [ ]
+              reward:
+                name: pgasc.midas.rewards.reward_pgasc_v5_1:GridHealthReward
+                params:
+                  weight_vm_pu: 1
+                  weight_all_in_service: 1
+                  weight_line_loading: 1
+                  weight_trafo_loading: 1
+                  weight_external_grid_usage: 1
+                  norm_weights: False
+              params:
+                name: bhv_palaestrai
+                config: bhv_midas.yml
+                end: *end
+                step_size: *step_size
+                start_date: 2017-01-01 00:00:00+0100
+                with_db: True
+                mosaik_params: { addr: [ 127.0.0.1, 5674 ] }
+      agents:
+        - name: mighty_defender
+          brain:
+            name: pgasc.agents.harl.ppo.brain:PGASCPPOBrain
+            params: { "server_store_path": "./defender", "load_path": "./defender" }
+          muscle:
+            name: pgasc.agents.harl.ppo.muscle:PGASCPPOMuscle
+            params: { "load_path": "./defender" }
+          objective:
+            name: pgasc.agents.harl.base.objective:DefenderObjective
+            params: { }
+          sensors: [ ]
+          actuators: [ ]
+        - name: evil_attacker
+          brain:
+            name: pgasc.agents.harl.ppo.brain:PGASCPPOBrain
+            params: { "server_store_path": "./attacker", "load_path": "./attacker" }
+          muscle:
+            name: pgasc.agents.harl.ppo.muscle:PGASCPPOMuscle
+            params: { "load_path": "./attacker" }
+          objective:
+            name: pgasc.agents.harl.base.objective:AttackerObjective
+            params: { }
+          sensors: [ ]
+          actuators: [ ]
+      simulation:
+        name: palaestrai.simulation:VanillaSimController
+        conditions:
+          - name: palaestrai.simulation:VanillaSimControllerTerminationCondition
+            params: { }
+      phase_config:
+        mode: train
+        worker: 1
+        episodes: 1
+run_config:
+  condition:
+    name: palaestrai.experiment:VanillaRunGovernorTerminationCondition
+    params: { }

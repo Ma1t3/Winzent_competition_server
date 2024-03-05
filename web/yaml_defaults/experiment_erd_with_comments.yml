@@ -1,0 +1,90 @@
+uid: "Example Experiment Run Document with comments"
+# HERE you can change the seed of the experiment (for reproducibility)
+seed: 123
+version: 3.4.0
+schedule:
+  - the_only_phase:
+      environments:
+        - environment:
+            name: palaestrai_mosaik:MosaikEnvironment
+            uid: env
+            params:
+              module: midas.adapter.palaestrai:Descriptor
+              description_func: describe
+              instance_func: get_world
+              # HERE you can change the step size of the simulation (in seconds, 900 = 15 minutes):
+              step_size: &step_size 900
+              # HERE you can change the duration of the simulation (in seconds, 24*60*60 = 24 hours):
+              end: &end 24*60*60
+              # HERE you can change the rating function used for the leaderboard:
+              rating_function: pgasc.midas.analyze.rating_functions.default_rating_function.DefaultRatingFunction
+              # HERE you can change if the grid parameters (like vm/pu) are stored in the database (True, slower) or not (False. faster):
+              write_in_midas_db: True
+              # HERE you can add own scenarios or use predefined scenarios
+              scenario: [ ]
+              reward:
+                # HERE you can configure and change the (global, environment) reward function used for the training and display in the grafana dashboard
+                name: pgasc.midas.rewards.reward_pgasc_v5_1:GridHealthReward
+                params:
+                  # HERE you can change the reward function parameters (in this case: the weights of the sub-rewards)
+                  weight_vm_pu: 1
+                  weight_all_in_service: 1
+                  weight_line_loading: 1
+                  weight_trafo_loading: 1
+                  weight_external_grid_usage: 1
+                  norm_weights: False
+              params:
+                name: bhv_palaestrai
+                config: bhv_midas.yml # please don't change this, as the bhv_midas.yml will dynamically be generated
+                end: *end
+                step_size: *step_size
+                # HERE you can change the start date of the simulation (in ISO format)
+                start_date: 2017-01-01 00:00:00+0100
+                with_db: True
+                mosaik_params: { addr: [ 127.0.0.1, 5674 ] }
+      agents:
+        - name: mighty_defender
+          brain:
+            # HERE you can change the brain path and params of the defender agent
+            name: palaestrai.agent.dummy_brain:DummyBrain
+            params: { }
+          muscle:
+            # HERE you can change the muscle path and params of the defender agent
+            name: palaestrai.agent.dummy_muscle:DummyMuscle
+            params: { }
+          objective:
+            # HERE you can change the objective and params path of the defender agent
+            name: palaestrai.agent.dummy_objective:DummyObjective
+            params: { "params": 1 }
+          sensors: [ ] # HERE you can add the sensors you want to use in this experiment
+          actuators: [ ] # HERE you can add the actuators you want to use in this experiment
+        - name: evil_attacker
+          brain:
+            # HERE you can change the brain path and params of the attacker agent
+            name: palaestrai.agent.dummy_brain:DummyBrain
+            params: { }
+          muscle:
+            # HERE you can change the muscle path and params of the attacker agent
+            name: palaestrai.agent.dummy_muscle:DummyMuscle
+            params: { }
+          objective:
+            # HERE you can change the objective and params path of the attacker agent
+            name: palaestrai.agent.dummy_objective:DummyObjective
+            params: { "params": 1 }
+          sensors: [ ] # HERE you can add the sensors you want to use in this experiment
+          actuators: [ ] # HERE you can add the actuators you want to use in this experiment
+      simulation:
+        name: palaestrai.simulation:VanillaSimController
+        conditions:
+          - name: palaestrai.simulation:VanillaSimControllerTerminationCondition
+            params: { }
+      phase_config:
+        # HERE you can change the mode of the experiment (train or test)
+        mode: train
+        worker: 1
+        # HERE you can change the number of episodes in the experiment
+        episodes: 1
+run_config:
+  condition:
+    name: palaestrai.experiment:VanillaRunGovernorTerminationCondition
+    params: { }

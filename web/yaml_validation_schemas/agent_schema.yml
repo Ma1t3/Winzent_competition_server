@@ -1,0 +1,13 @@
+# Agent run YAML schema
+
+load: map(required=False)
+brain: include('name_params')
+muscle: include('name_params')
+objective: include('name_params')
+sensors: list()
+actuators: list()
+---
+name_params:
+  name: str()
+  uid: str(required=False)
+  params: map()

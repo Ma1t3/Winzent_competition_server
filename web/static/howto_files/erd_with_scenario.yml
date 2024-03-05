@@ -1,0 +1,109 @@
+uid: "Example ERD with scenario"
+seed: 123
+version: 3.4.0
+schedule:
+  - the_only_phase:
+      environments:
+        - environment:
+            name: palaestrai_mosaik:MosaikEnvironment
+            uid: env
+            params:
+              module: midas.adapter.palaestrai:Descriptor
+              description_func: describe
+              instance_func: get_world
+              step_size: &step_size 900
+              end: &end 24*60*60
+              rating_function: pgasc.midas.analyze.rating_functions.default_rating_function.DefaultRatingFunction
+              write_in_midas_db: True
+              scenario:
+                # [ start, end, dictionary of parameters ]
+                # set all actuators not in service at 11:00, back at 16:00
+                - [ 12*60*60, 16*60*60-1, {
+                  0-sgen-0-16.in_service: False,
+                  0-sgen-1-17.in_service: False,
+                  0-sgen-2-20.in_service: False,
+                  0-sgen-3-22.in_service: False,
+                  0-sgen-4-23.in_service: False,
+                  0-sgen-5-25.in_service: False,
+                  0-sgen-6-28.in_service: False,
+                  0-sgen-7-30.in_service: False,
+                  0-sgen-8-32.in_service: False,
+                  0-sgen-9-33.in_service: False,
+                  0-sgen-10-35.in_service: False,
+                  0-sgen-11-37.in_service: False,
+                  0-sgen-12-39.in_service: False,
+                  0-sgen-13-40.in_service: False,
+                  0-sgen-14-43.in_service: False,
+                  0-sgen-15-45.in_service: False,
+                  0-sgen-16-50.in_service: False,
+                  0-sgen-17-53.in_service: False,
+                  0-sgen-18-55.in_service: False,
+                  0-sgen-19-57.in_service: False,
+                  0-sgen-20-63.in_service: False,
+                  0-sgen-21-65.in_service: False,
+                  0-sgen-22-67.in_service: False,
+                  0-sgen-23-71.in_service: False,
+                  0-sgen-24-80.in_service: False,
+                } ]
+                # set all (except one) external grids not in service at 3:00, back at 6:00
+                - [ 3*60*60, 6*60*60-1, {
+                  0-ext_grid-14.in_service: False,
+                  0-ext_grid-8.in_service: False,
+                  0-ext_grid-1.in_service: False,
+                  0-ext_grid-13.in_service: True,
+                } ]
+              reward:
+                name: pgasc.midas.rewards.reward_pgasc_v5_1:GridHealthReward
+                params:
+                  weight_vm_pu: 1
+                  weight_all_in_service: 1
+                  weight_line_loading: 1
+                  weight_trafo_loading: 1
+                  weight_external_grid_usage: 1
+                  norm_weights: False
+              params:
+                name: bhv_palaestrai
+                config: bhv_midas.yml
+                end: *end
+                step_size: *step_size
+                start_date: 2017-01-01 00:00:00+0100
+                with_db: True
+                mosaik_params: { addr: [ 127.0.0.1, 5674 ] }
+      agents:
+        - name: mighty_defender
+          brain:
+            name: palaestrai.agent.dummy_brain:DummyBrain
+            params: { }
+          muscle:
+            name: palaestrai.agent.dummy_muscle:DummyMuscle
+            params: { }
+          objective:
+            name: palaestrai.agent.dummy_objective:DummyObjective
+            params: { "params": 1 }
+          sensors: [ ]
+          actuators: [ ]
+        - name: evil_attacker
+          brain:
+            name: palaestrai.agent.dummy_brain:DummyBrain
+            params: { }
+          muscle:
+            name: palaestrai.agent.dummy_muscle:DummyMuscle
+            params: { }
+          objective:
+            name: palaestrai.agent.dummy_objective:DummyObjective
+            params: { "params": 1 }
+          sensors: [ ]
+          actuators: [ ]
+      simulation:
+        name: palaestrai.simulation:VanillaSimController
+        conditions:
+          - name: palaestrai.simulation:VanillaSimControllerTerminationCondition
+            params: { }
+      phase_config:
+        mode: test
+        worker: 1
+        episodes: 1
+run_config:
+  condition:
+    name: palaestrai.experiment:VanillaRunGovernorTerminationCondition
+    params: { }

@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+
+{% block title %}Upload Agent | PG-ASC Competition Server{% endblock %}
+
+{% block content %}
+    <div class="container p-5">
+        <div class="row">
+            <h1>Upload Agent System</h1>
+        </div>
+        <div class="row align-items-center h-100">
+            <div class="col align-self-center">
+                {% load crispy_forms_tags %}
+                <form id="upload_form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ message }}
+                    <div class="row justify-content-center">
+                        <div class="col mx-2">
+                            {{ form|crispy }}
+                        </div>
+                    </div>
+                    <div class="row justify-content-center">
+                        <div class="col mx-2">
+                            <div class="d-grid gap-2">
+                                <br>
+                                <button id="upload_button" type="submit" class="btn btn-primary">Upload
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block js_block %}
+    <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.8.1/ace.js" type="text/javascript" charset="utf-8"></script>
+    <script type="application/javascript" src="{% static 'javascript/ace_code_editor.js' %}" defer></script>
+    <script type="application/javascript" src="{% static 'javascript/error_messages.js' %}" defer></script>
+    <script type="application/javascript" src="{% static 'javascript/drag_and_drop_yml.js' %}" defer></script>
+    <script>
+        $(document).ready(function () {
+            const textarea = $('#id_init_yml');
+            const form = $('#upload_form');
+            showCodeEditor(textarea, form);
+            addYamlDragAndDrop("hint_id_init_yml");
+        });
+    </script>
+    <script type="application/javascript" src="{% static 'javascript/verify_file_size.js' %}" defer></script>
+    <script type="application/javascript" src="{% static 'javascript/check_agent_name_exists.js' %}" defer></script>
+{% endblock %}

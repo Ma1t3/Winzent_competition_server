@@ -1,0 +1,569 @@
+{# PLEASE DO NOT CHANGE THIS CONTENT! Use how_to.md instead and created the html afterwards with https://markdowntohtml.com/. #}
+<h1 id="how-to-use-the-competition-server">How to use the competition server</h1>
+<p>This page contains all information on how to upload agents or configure experiments and competitions. This is
+    explicitly not a tutorial
+    on how to design or implement agent systems, but rather a guide on how to use the competition server. Some functions
+    of the competition server can be used without registration, such as displaying public experiments or competitions.
+    However, to upload your own agent systems or to create experiments or competitions, you need to create an
+    account. </p>
+<h2 id="concept-of-agents-experiments-and-competitions">Concept of agents, experiments and competitions</h2>
+<p>Before you can start using the competition server, you need to understand the concept of agents, experiments and
+    competitions.
+    In our context, an agent (system) is, in simple terms, a program that uses the inputs of the power system simulation
+    to
+    make decisions about the control of the power grid&#39;s actuators
+    There are several possible ways to implement an agent, two examples are Training using
+    <a href="https://www.offis.de/en/research/applied-artificial-intelligence/adversarial-resilience-learning-e.html">Adversarial
+        Resilience Learning</a>
+    or
+    <a href="https://tu-freiberg.de/sites/default/files/media/institut-fuer-informatik-9034/professur-st/publikation/ijait_2014_v7_n12_ldsa_ad_scsg.pdf">Winzent</a>.
+    There are some default agent systems available in the competition server, among them several Reinforcement Learning
+    algorithms
+    for an implementation of Adversarial Resilience Learning and a Winzent agent. You can also implement your own agent
+    system
+    and upload it to the competition server.</p>
+<p>The competition server distinguishes between experiments and competitions. An experiment is a one-time
+    execution of a simulation of the power grid in which the actions of the agent systems are applied. Meanwhile, agent
+    systems can be trained using reinforcement learning in the ARL context. The competition server can then
+    automatically
+    save the trained agent as a new agent system. Nevertheless, the competition server can also handle agent systems
+    that are not
+    based on machine learning, such as Winzent.
+    An experiment can be configured using an Experiment Run Document (ERD).
+    On the competition server, an experiment is always a counterplay of an attacking (attacker) agent system with the
+    goal
+    of destabilizing the power grid and a defending (defender) agent system with the goal of stabilizing the power
+    grid.</p>
+<p>To compare agent systems with each other, you can use competitions. The basic idea of a competition is to select <em>n</em>
+    attackers and <em>m</em> defenders to compete against each other. When creating the competition, <em>m &middot;
+        n</em> experiments are created,
+    in each experiment an attacker competes against a defender. So, each attacker is paired once with each defender and
+    vice versa. The configuration is the same for all experiments. </p>
+<p>Now, if you want to compare RL different agents, you can first upload the untrained agents to the competition
+    server – or use the built-in hARL agents (e.g. <em>DDPG-Agent (untrained)</em>). Then the agents can be trained
+    using experiments,
+    and the agents trained as defenders and attackers can be automatically saved as new agents by the competition
+    server.
+    Finally, you can use the trained agents (also together with baselines and other agents developed by other users)
+    in a competition to compare them. Research results can be derived from the results and leaderboard on the
+    competition
+    details page and from the details of each experiment in the competition.</p>
+<h2 id="uploading-an-agent">Uploading an agent</h2>
+<p>You can use the built-in agents or upload your own agent. To upload your own agent, you need to create an account on
+    the
+    competition server. Then you can upload your agent as a zip file. The zip file must contain all files necessary to
+    run
+    your agent. The agent implementation has to be written in Python and must be compatible with the Brain/Muscle API of
+    the
+    palaestrAI framework. Please read the <a href="http://docs.palaestr.ai/brain-muscle-api.html">palaestrAI
+        documentation (Brain/Muscle API)</a> carefully.
+    Your zip file may also contain a <code>requirements.txt</code> file in the root directory, which will be installed
+    automatically
+    before the agent is started. This is useful if your agent requires additional Python packages. Some packages like
+    <em>NumPy</em> or <em>PyTorch</em> are already installed on the competition server, so you don&#39;t need to include
+    them in your
+    <code>requirements.txt</code> file.</p>
+<p>You must name your agent, specify a role (attacker, defender, or both if your algorithm can be used as both),
+    and you may provide a description (optional). If you set your agent as public, every user of the competition server
+    can
+    use it in an experiment or competition or download the files of the agent. If you set your agent as private, only
+    you can use it.
+    If you want to use your agent in a competition, the <code>Agent YAML for Competitions</code> must be set. For now,
+    you can leave the <code>Agent YAML for Competitions</code> field with the default value. If you want to train your
+    agent in an
+    experiment, the agent YAML will be automatically extracted from the Experiment Run Document. As long as the agent
+    YAML
+    is not set correctly, the agent cannot be used in a competition. You can change the agent YAML on the agent details
+    page.
+    On that page, you can see all relevant details of your agent, such as role, description and a list of files.</p>
+<h2 id="running-an-experiment">Running an experiment</h2>
+<p>If you are logged in, you can create a new experiment on the <code>Experiments</code> page. You have to specify a
+    name for your
+    experiment, and you have to select a defender and an attacker. If you want to train your agent in the experiment,
+    you
+    should tick the <code>Store copy of trained ...</code> checkbox. This will save the agent as a new agent system on
+    the competition
+    server after the experiment is finished. You can then use the trained agent in a competition.
+    You need to specify the <em>Experiment Run Document (ERD)</em> for the experiment. The ERD is a YAML file that
+    contains all
+    configuration options for the experiment. You can use the online code editor, or drag and drop an existing YAML
+    file.
+    The syntax and all options of the ERD are described below. Syntax is checked automatically, when you save the
+    experiment.
+    You can also use the default ERD or one of the example ERDs below as a starting point. The default ERD has also a
+    lot of
+    comments that explain the options. It is also possible to duplicate an existing experiment.
+    This will open a new experiment creation page with the same settings as the original experiment.</p>
+<p>After creating the experiment, you can start it by clicking on the <code>Start</code> button. The experiment will be
+    executed when
+    there is capacity on the competition server. You can see the status of the experiment on the
+    <code>Experiments</code> page. If
+    <code>Autoreload</code> is enabled, the page will automatically update the experiment list. Currently running
+    experiments are
+    always at the top of the list. You can see the details of the
+    experiment on the experiment details page. You can view and download the ERD and also the results of the experiment,
+    once the experiment is finished. While the experiment is running, the progress of the experiment can be viewed in
+    real-time in the Grafana board, a live log is available on the <code>Logfile</code> tab. You can also abort
+    experiments if you
+    want to stop them or if you see errors in the log. The results or <code>Datapoints</code> consist of evaluation
+    criteria calculated
+    by the MIDAS framework and evaluation functions composed of them.
+    These have the goal of describing the health of the power grid over the entire experiment using a scalar. You can
+    define
+    your own evaluation functions and upload them together with an agent to use them in an experiment.
+    However, the default evaluation function we developed can also be used (recommended). The function is described in
+    the
+    popup window on the experiment details page.</p>
+<h2 id="running-a-competition">Running a competition</h2>
+<p>You can create a competition on the <code>Competitions</code> page. You have to specify a name for your competition,
+    and you have to
+    choose all attackers and defenders that should compete against each other. The configuration of the competition has
+    to
+    be specified in the <em>Competition Run Document (CRD)</em>, which follows the same syntax and has the same
+    structure as an ERD
+    – only without the agents section. The ERD for each experiment is then dynamically generated by the competition
+    server.
+    The agent YAML has to be set for all agents, you want to use in the competition. If your agent is not in the list,
+    check the agent details page if the agent YAML is set correctly. After creating the competition, all experiments are
+    automatically created. </p>
+<p>Thus, starting a competition ensures the execution of all generated experiments. After all experiments have been
+    completed, the results of the competition can be calculated.
+    For the evaluation of a competition, the calculated values of the evaluation criteria and functions can be displayed
+    on
+    the web interface. For each criterion/function, the following values are calculated for each agent: the minimum
+    value,
+    the maximum value and an average over all experiments in which this agent participated.
+    So the implemented evaluation function can be used to compare the defenders directly: The competition server
+    additionally displays a leaderboard on which the average of the rating function is used to rank the defenders. The
+    more
+    points the rating function calculates or the higher the stability of the power grid was during the experiments a
+    defender
+    participated in, the better his place on the leaderboard. For attacker, there is also a leaderboard with the reverse
+    sorting: Since the attacker&#39;s goal is to destabilize the power grid, a lower score means a better performance of
+    the attacker.
+    You can also see the results and graphs of each individual experiment.</p>
+<h2 id="experiment-run-documents-in-detail">Experiment Run Documents in Detail</h2>
+<p>The Experiment Run Document (ERD) is defined in YAML format. The semantics of the ERD are described in the
+    <a href="http://docs.palaestr.ai/quickstart.html#palaestrai-experiment">palaestrAI Quickstart Guide</a> in a general
+    way.
+    The most important parts of the ERD to use the competition server are the <code>environment</code> and
+    <code>agents</code> sections.
+    In the following, you can find code examples and the most important points to pay attention to when creating an ERD.
+    At first, the <code>uid</code> of the ERD is replaced internally and can be set arbitrarily.</p>
+<h3 id="environment">Environment</h3>
+<p>The default ERD uses a model of the Bremerhaven (BHV) grid as environment. The following Figure shows a graphical
+    representation of the Bremerhaven grid. Buses are shown in blue, external grids in yellow. Generators (circles),
+    loads (triangles) and transformers (double-circles) are also shown:
+    <img src="/static/images/bhv_grid.png" alt="BHV Grid" width="600"/></p>
+<p>To use the bhv grid, the environment needs to be configured in ERD as follows. You can change the explained
+    parameters,
+    but you should not change the other parameters except you know what you are doing.</p>
+<p>Example for the <code>environments</code> section of the ERD:</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">environments:</span>
+<span class="hljs-attr">  - environment:</span>
+<span class="hljs-attr">      name:</span> palaestrai_mosaik:MosaikEnvironment
+<span class="hljs-attr">      uid:</span> env
+<span class="hljs-attr">      params:</span>
+<span class="hljs-attr">        module:</span> midas.adapter.palaestrai:Descriptor
+<span class="hljs-attr">        description_func:</span> describe
+<span class="hljs-attr">        instance_func:</span> get_world
+        <span class="hljs-comment"># HERE you can change the step size of the simulation (in seconds, 900 = 15 minutes):</span>
+<span class="hljs-attr">        step_size:</span> &amp;step_size <span class="hljs-number">900</span>
+        <span class="hljs-comment"># HERE you can change the duration of the simulation (in seconds, 24*60*60 = 24 hours):</span>
+<span class="hljs-attr">        end:</span> &amp;end <span class="hljs-number">24</span>*<span
+            class="hljs-number">60</span>*<span class="hljs-number">60</span>
+        <span class="hljs-comment"># HERE you can change the rating function used for the leaderboard:</span>
+<span class="hljs-attr">        rating_function:</span> pgasc.midas.analyze.rating_functions.default_rating_function.DefaultRatingFunction
+        <span class="hljs-comment"># HERE you can change if the grid parameters (like vm/pu) are stored in the database (True) or not (False)</span>
+        <span class="hljs-comment"># If True, the simulation is much slower, but you can see the parameters in the grafana dashboard, interesting for testing</span>
+        <span class="hljs-comment"># If False, the simulation is much faster, but you can't see the parameters in the grafana dashboard, interesting for training with many episodes</span>
+<span class="hljs-attr">        write_in_midas_db:</span> <span class="hljs-literal">True</span>
+        <span class="hljs-comment"># HERE you can add scenarios to the experiment or competition or use predefined scenarios</span>
+<span class="hljs-attr">        scenario:</span> [ ]
+        <span class="hljs-comment"># HERE you can configure and change the (global, environment) reward function used for the training and display in the grafana dashboard</span>
+<span class="hljs-attr">        reward:</span>
+<span class="hljs-attr">          name:</span> pgasc.midas.rewards.reward_pgasc_v5_1:GridHealthReward
+<span class="hljs-attr">          params:</span>
+            <span class="hljs-comment"># HERE you can change the reward function parameters (in this case: the weights of the sub-rewards)</span>
+<span class="hljs-attr">            weight_vm_pu:</span> <span class="hljs-number">1</span>
+<span class="hljs-attr">            weight_all_in_service:</span> <span class="hljs-number">1</span>
+<span class="hljs-attr">            weight_line_loading:</span> <span class="hljs-number">1</span>
+<span class="hljs-attr">            weight_trafo_loading:</span> <span class="hljs-number">1</span>
+<span class="hljs-attr">            weight_external_grid_usage:</span> <span class="hljs-number">1</span>
+<span class="hljs-attr">            norm_weights:</span> <span class="hljs-literal">False</span>
+<span class="hljs-attr">        params:</span>
+<span class="hljs-attr">          name:</span> bhv_palaestrai
+<span class="hljs-attr">          config:</span> bhv_midas.yml <span class="hljs-comment"># please don't change this, as the bhv_midas.yml will dynamically be generated</span>
+<span class="hljs-attr">          end:</span> <span class="hljs-meta">*end</span>
+<span class="hljs-attr">          step_size:</span> <span class="hljs-meta">*step_size</span>
+          <span class="hljs-comment"># HERE you can change the start date of the simulation (in ISO format)</span>
+<span class="hljs-attr">          start_date:</span> <span class="hljs-number">2017</span><span
+            class="hljs-bullet">-01</span><span class="hljs-bullet">-01</span> <span class="hljs-number">00</span>:<span
+            class="hljs-number">00</span>:<span class="hljs-number">00</span>+<span class="hljs-number">0100</span>
+<span class="hljs-attr">          with_db:</span> <span class="hljs-literal">True</span>
+<span class="hljs-attr">          mosaik_params:</span> { addr: [ <span class="hljs-number">127.0</span><span
+            class="hljs-number">.0</span><span class="hljs-number">.1</span>, <span class="hljs-number">5674</span> ] }
+</code></pre>
+<h4 id="scenarios">Scenarios</h4>
+<p>You can use scenarios in experiments and competitions. A scenario is a list of actions that are executed in the
+    environment at a specific time. There are a few predefined scenarios which can be used directly with the <code>scenario</code>
+    section in the ERD, e.g. <code>scenario: ext_grid_fallout</code>.</p>
+<p>Here&#39;s a list of all predefined scenarios:</p>
+<ul>
+    <li><code>ext_grid_fallout</code>: Some external grids are broken.</li>
+    <li><code>gen_fallout</code>: All generators are broken.</li>
+    <li><code>gen_fallout_light</code>: Some generators are broken.</li>
+    <li><code>loads_rising</code>: All loads needs more power.</li>
+    <li><code>sgens_rising</code>: All generators needs more power.</li>
+</ul>
+<p>You can also define your own scenarios for your experiments and competitions. To do so, you need to specify a list in
+    the <code>scenario</code> section. Each item of the list consists of a tuple
+    <code>[start, end, dictionary of parameters]</code>.
+    Start and end time are specified in seconds. The scenario will be active from <code>start</code> to <code>end</code>.
+    After the end, the actuator will
+    be set to the last value it had before the scenario started. The dictionary of parameters is a dictionary with any
+    MIDAS actuators as keys and the action as value. All MIDAS actuators and their range of values are listed in the
+    file
+    <a href="/static/howto_files/scenario_parameters.txt">scenario_parameters.txt</a>. A value set by a scenario always
+    overrides
+    possible agent actions and MIDAS default profiles.</p>
+<p>Example for the scenario section with two different scenarios:</p>
+<pre><code class="lang-yaml">scenario:
+  # set all actuators not in service at 11:00, back at 16:00
+  - [ 12*60*60, 16*60*60<span class="hljs-string">-1</span>, {
+    0-sgen<span class="hljs-string">-0</span><span class="hljs-string">-16</span>.in_service: False,
+    0-sgen<span class="hljs-string">-1</span><span class="hljs-string">-17</span>.in_service: False,
+    0-sgen<span class="hljs-string">-2</span><span class="hljs-string">-20</span>.in_service: False,
+    0-sgen<span class="hljs-string">-3</span><span class="hljs-string">-22</span>.in_service: False,
+    0-sgen<span class="hljs-string">-4</span><span class="hljs-string">-23</span>.in_service: False,
+    0-sgen<span class="hljs-string">-5</span><span class="hljs-string">-25</span>.in_service: False,
+    0-sgen<span class="hljs-string">-6</span><span class="hljs-string">-28</span>.in_service: False,
+    0-sgen<span class="hljs-string">-7</span><span class="hljs-string">-30</span>.in_service: False,
+    0-sgen<span class="hljs-string">-8</span><span class="hljs-string">-32</span>.in_service: False,
+    0-sgen<span class="hljs-string">-9</span><span class="hljs-string">-33</span>.in_service: False,
+    0-sgen<span class="hljs-string">-10</span><span class="hljs-string">-35</span>.in_service: False,
+    0-sgen<span class="hljs-string">-11</span><span class="hljs-string">-37</span>.in_service: False,
+    0-sgen<span class="hljs-string">-12</span><span class="hljs-string">-39</span>.in_service: False,
+    0-sgen<span class="hljs-string">-13</span><span class="hljs-string">-40</span>.in_service: False,
+    0-sgen<span class="hljs-string">-14</span><span class="hljs-string">-43</span>.in_service: False,
+    0-sgen<span class="hljs-string">-15</span><span class="hljs-string">-45</span>.in_service: False,
+    0-sgen<span class="hljs-string">-16</span><span class="hljs-string">-50</span>.in_service: False,
+    0-sgen<span class="hljs-string">-17</span><span class="hljs-string">-53</span>.in_service: False,
+    0-sgen<span class="hljs-string">-18</span><span class="hljs-string">-55</span>.in_service: False,
+    0-sgen<span class="hljs-string">-19</span><span class="hljs-string">-57</span>.in_service: False,
+    0-sgen<span class="hljs-string">-20</span><span class="hljs-string">-63</span>.in_service: False,
+    0-sgen<span class="hljs-string">-21</span><span class="hljs-string">-65</span>.in_service: False,
+    0-sgen<span class="hljs-string">-22</span><span class="hljs-string">-67</span>.in_service: False,
+    0-sgen<span class="hljs-string">-23</span><span class="hljs-string">-71</span>.in_service: False,
+    0-sgen<span class="hljs-string">-24</span><span class="hljs-string">-80</span>.in_service: False,
+  } ]
+  # set all (except one) external grids not in service at 3:00, back at 6:00
+  - [ 3*60*60, 6*60*60<span class="hljs-string">-1</span>, {
+    0-ext_grid<span class="hljs-string">-14</span>.in_service: False,
+    0-ext_grid<span class="hljs-string">-8</span>.in_service: False,
+    0-ext_grid<span class="hljs-string">-1</span>.in_service: False,
+    0-ext_grid<span class="hljs-string">-13</span>.in_service: True,
+  } ]
+</code></pre>
+<h4 id="reward-function">Reward Function</h4>
+<p>To train an agent using Reinforcement Learning, you need to define a reward function. You can define your own reward
+    and upload it together with your agent, or you can use one of the predefined reward functions. There are 5 versions
+    of
+    the reward function <code>pgasc.midas.rewards.reward_pgasc_v*:GridHealthReward</code> with <code>*</code> in (<code>v1_1</code>,
+    <code>v2</code>, <code>v3</code>, <code>v4</code>, <code>v5_1</code>).
+    The reward functions are described in our documentation.</p>
+<h4 id="agents">Agents</h4>
+<p>In the <code>agents</code> section of an ERD, you can define the agents that are used in the experiment. In
+    Competitions, the
+    agent YAMLs are used. The agent YAML follows the same syntax, but without the <code>name</code> tag.
+    The Agent YML is used in competitions only, so that you have full flexibility over the agent configuration in
+    experiments.
+    For example, you can train agents with different parameters or different sensors and actuators in experiments.
+    Make always sure that the agent definition in the ERD matches the agents selected in the dropdown menu.
+    For competitions, make sure all paths in the Agent YAML are correct. If not, you can change them on the agent
+    details page.</p>
+<h5 id="uploaded-agents">Uploaded Agents</h5>
+<p>To use an uploaded agent, first choose the agent in the dropdown menu. Then, add the correct path in the
+    <code>name</code> field of
+    the agents section,
+    e.g. <code>name: defender.dummy_brain:DummyBrain</code> for the defender if there is an <code>dummy_brain.py</code>
+    with the class <code>DummyBrain</code>
+    in the root directory of the selected defender agent. For the attacker, the path would be in this example
+    <code>name: attacker.dummy_brain:DummyBrain</code>.
+    For the agent YAML in competitions, use the file structure of your uploaded agent directly without
+    <code>defender.</code>
+    or <code>attacker.</code> prefix. You can see the file structure of the uploaded agents in the <code>Files</code>
+    tab on the agent details page.
+    You can also specify parameters of your agent implementation in <code>params</code> section for brain, muscle and
+    objective.
+    To learn more about the difference between the reward and an agent&#39;s objective, have a closer look at the
+    <a href="http://docs.palaestr.ai/reward.html">palaestrAI documentation (Reward and objective)</a>.</p>
+<p>Example for an uploaded defender agent (without sensors or actuators):</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">- name:</span> mighty_defender
+<span class="hljs-attr">  brain:</span>
+    <span class="hljs-comment"># HERE you can change the brain path and params of your uploaded agent</span>
+<span class="hljs-attr">    name:</span> dummy_brain:DummyBrain
+<span class="hljs-attr">    params:</span> { <span class="hljs-string">"key"</span>: <span
+            class="hljs-string">"value"</span> }
+<span class="hljs-attr">  muscle:</span>
+    <span class="hljs-comment"># HERE you can change the muscle path and params of your uploaded agent</span>
+<span class="hljs-attr">    name:</span> dummy_muscle:DummyMuscle
+<span class="hljs-attr">    params:</span> { }
+<span class="hljs-attr">  objective:</span>
+    <span class="hljs-comment"># HERE you can change the objective and params path of your uploaded agent</span>
+<span class="hljs-attr">    name:</span> dummy_objective:DummyObjective
+<span class="hljs-attr">    params:</span> { }
+<span class="hljs-attr">  sensors:</span> [ ]
+<span class="hljs-attr">  actuators:</span> [ ]
+</code></pre>
+<h5 id="predefined-agents">Predefined Agents</h5>
+<p>You can also use predefined agents. Use the dropdown menu to select the agent. Then, you can use the path of the
+    agent
+    in the <code>name</code> field of the agents section directly,
+    e.g. <code>name: palaestrai.agent.dummy_brain:DummyBrain</code>.</p>
+<p>The full list of directly usable paths (without need to upload an agent):</p>
+<pre><code class="lang-python"><span class="hljs-attr">brains</span> = [
+    <span class="hljs-string">"palaestrai.agent.dummy_brain:DummyBrain"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.ddpg.brain:PGASCDDPGBrain"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.ppo.brain:PGASCPPOBrain"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.sac.brain:PGASCSACBrain"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.td3.brain:PGASCTD3Brain"</span>,
+]
+<span class="hljs-attr">muscles</span> = [
+    <span class="hljs-string">"palaestrai.agent.dummy_muscle:DummyMuscle"</span>,
+    <span class="hljs-string">"pgasc.agents.palaestrai_test_agents.muscles:SetNothingMuscle"</span>,
+    <span class="hljs-string">"pgasc.agents.palaestrai_test_agents.muscles:SetpointMuscle"</span>,
+    <span class="hljs-string">"pgasc.agents.palaestrai_test_agents.muscles:SaveValuesMuscle"</span>,
+    <span class="hljs-string">"pgasc.agents.winzent_agent_system.muscle:WinzentMuscle"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.ddpg.muscle:PGASCDDPGMuscle"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.ppo.muscle:PGASCPPOMuscle"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.sac.muscle:PGASCSACMuscle"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.td3.muscle:PGASCTD3Muscle"</span>,
+]
+<span class="hljs-attr">objectives</span> = [
+    <span class="hljs-string">"palaestrai.agent.dummy_objective:DummyObjective"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.base.objective:DummyObjective"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.base.objective:AttackerObjective"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.base.objective:DefenderObjective"</span>,
+    <span class="hljs-string">"pgasc.agents.harl.base.objective:DefenderDeltaObjective"</span>,
+]
+</code></pre>
+<h5 id="sensors-and-actuators">Sensors and Actuators</h5>
+<p>There are many sensors and actuators the agents can use. Sensors e.g. to get information about the topology (<code>grid_json</code>;
+    used by Winzent) or about the components of the power grid (e.g. to get <code>p_mw</code> and <code>q_mvar</code> of
+    loads and generators).
+    Actuators e.g. to set the <code>p_mw</code> and <code>q_mvar</code> of loads and sgens. All power grid components
+    and their attributes are described in the
+    <a href="https://pandapower.readthedocs.io/en/v2.9.0/elements.html">pandapower documentation</a>. A full list of all
+    sensors and
+    actuators in the bhv grid is provided in the file <a href="/static/howto_files/all_sensors_and_actuators.yml">all_sensors_and_actuators.yml</a>.
+</p>
+<p>Example with 2 sensors and 2 actuators (p_mw of 2 specific load as sensors, scaling of 2 specific generators as
+    actuators):</p>
+<pre><code class="lang-yaml">sensors:
+  - env<span class="hljs-selector-class">.Powergrid-0</span>.<span class="hljs-number">0</span>-load-<span
+            class="hljs-number">0</span>-<span class="hljs-number">15</span><span
+            class="hljs-selector-class">.p_mw</span>
+  - env<span class="hljs-selector-class">.Powergrid-0</span>.<span class="hljs-number">0</span>-load-<span
+            class="hljs-number">1</span>-<span class="hljs-number">17</span><span
+            class="hljs-selector-class">.p_mw</span>
+actuators:
+  - env<span class="hljs-selector-class">.Powergrid-0</span>.<span class="hljs-number">0</span>-sgen-<span
+            class="hljs-number">0</span>-<span class="hljs-number">16</span><span
+            class="hljs-selector-class">.scaling</span>
+  - env<span class="hljs-selector-class">.Powergrid-0</span>.<span class="hljs-number">0</span>-sgen-<span
+            class="hljs-number">1</span>-<span class="hljs-number">17</span>.scaling
+</code></pre>
+<p>You shouldn&#39;t give the exact same actuator to multiple agents (in this case, it is non-deterministic, which agent
+    controls the actuator).
+    However, it is possible to use the actuators with suffix <code>_prio-*</code> (where <code>*</code> is an integer),
+    e.g. <code>env.Powergrid-0.0-sgen-0-16.scaling_prio-1</code>. The agent with the highest priority (smallest
+    <code>*</code>-value) will control
+    the actuator if it sets a value. If the agent with the highest priority does not set a value (<code>None</code>),
+    the agent with
+    the next highest priority will control the actuator, ... This is useful in combination with the <code>probability_factor</code>
+    of
+    the PGASC-DDPG-Muscle. With this implementation, multiple agents can have the same actuators with different
+    priorities.
+    Pay attention to priorities in competitions, where all attackers are paired with all defenders.</p>
+<h5 id="save-and-load-agents">Save and load agents</h5>
+<p>To first train an agent and test it, use two different experiments with the same agent configuration (including
+    sensors and actuators) in the ERD. In the first experiment (training), choose <code>train</code>-mode in the ERD.
+    Click on <code>Store copy of trained attacker/defender</code> to save the trained agent and use the trained agent in
+    a second experiment.
+    You can duplicate the experiment and change the mode to <code>test</code>. To save the agent YAML automatically make
+    sure the
+    attacker is named <code>evil_attacker</code> and the defender is named <code>mighty_defender</code> in the training
+    experiment. Saving and
+    loading agents is only possible if the agent stores its data in the <code>./defender</code> directory (for a
+    defender) or the <code>./attacker</code>
+    (for an attacker) directory. Otherwise, the trained agent will not be saved. The usage of PGASC-hARL-Agents is
+    recommended as they can store their data suitable for saving and loading on the competition server.</p>
+<h5 id="pgasc-harl-agents">PGASC-hARL-Agents</h5>
+<p>The PGASC-hARL-Agents extend the hARL agents of the <a href="https://gitlab.com/arl2/harl">hARL repository</a> in the
+    version of the dc73d804 commit (of June 15, 2022).
+    An example brain path of a DDPG agent is <code>pgasc.agents.harl.ddpg.brain:PGASCDDPGBrain</code>.
+    As parameters, you always need to set the <code>server_store_path</code> and the <code>load_path</code> parameters
+    in the <code>params</code> section
+    of the brain and the <code>load_path</code> parameter in the <code>params</code> section of the muscle. Also, use
+    always <code>./defender</code> as store
+    and load path for the defender and <code>./attacker</code> as store and load path for the attacker. The <code>load_path</code>
+    parameter can
+    and should already be set in train_mode. This is useful if you want to use the trained agent directly in the
+    competition
+    without modifying the agent YAML.</p>
+<p>Example for a DDPG defender agent (without sensors or actuators):</p>
+<pre><code class="lang-yaml">- name: mighty_defender
+<span class="hljs-symbol">  brain:</span>
+<span class="hljs-symbol">    name:</span> pgasc.agents.harl.ddpg.brain:PGASCDDPGBrain
+    <span class="hljs-meta"># HERE you can change the parameters of the learning algorithm (except the <span
+            class="hljs-string">"server_store_path"</span> and <span class="hljs-string">"load_path"</span> parameters)</span>
+<span class="hljs-symbol">    params:</span> { <span class="hljs-string">"server_store_path"</span>: <span
+            class="hljs-string">"./defender"</span>, <span class="hljs-string">"load_path"</span>: <span
+            class="hljs-string">"./defender"</span>, gamma: <span class="hljs-number">0.99</span>, tau: <span
+            class="hljs-number">0.001</span>, batch_size: <span class="hljs-number">8</span>, alpha: <span
+            class="hljs-number">0.00005</span>, beta: <span class="hljs-number">0.001</span>, fc_dims: [ <span
+            class="hljs-number">200</span>,<span class="hljs-number">150</span>,<span class="hljs-number">100</span> ], replay_size: <span
+            class="hljs-number">1000000</span> }
+<span class="hljs-symbol">  muscle:</span>
+<span class="hljs-symbol">    name:</span> pgasc.agents.harl.ddpg.muscle:PGASCDDPGMuscle
+<span class="hljs-symbol">    params:</span> { <span class="hljs-string">"load_path"</span>: <span class="hljs-string">"./defender"</span> }
+<span class="hljs-symbol">  objective:</span>
+<span class="hljs-symbol">    name:</span> pgasc.agents.harl.base.objective:DefenderObjective
+<span class="hljs-symbol">    params:</span> { }
+<span class="hljs-symbol">  sensors:</span> []
+<span class="hljs-symbol">  actuators:</span> []
+</code></pre>
+<h5 id="winzent">Winzent</h5>
+<p>The Winzent agent system is updated to the latest version available in <a
+        href="https://gitlab.com/mango-agents/mango-library/-/tree/PGASC-Winzent-Changes">GitLab</a>.
+    Winzent does not need brain and objective, but as they are mandatory sections in the ERD, you can use the dummy
+    brain and objective.
+    Winzent always requires the <code>grid_json</code> sensor and uses the <code>p_mw</code> sensors of all loads and
+    the <code>p_mw_flex</code> sensors
+    of all generators. As actuators, it uses the <code>scaling</code> values of all generators. </p>
+<p>Example for Winzent (sensors and actuators are shortened):</p>
+<pre><code class="lang-yaml"><span class="hljs-attr">- name:</span> Winzent
+<span class="hljs-attr">  brain:</span>
+<span class="hljs-attr">    name:</span> palaestrai.agent.dummy_brain:DummyBrain
+<span class="hljs-attr">    params:</span> { }
+<span class="hljs-attr">  muscle:</span>
+<span class="hljs-attr">    name:</span> pgasc.agents.winzent_agent_system.muscle:WinzentMuscle
+<span class="hljs-attr">    params:</span>
+<span class="hljs-attr">      step_size:</span> <span class="hljs-number">900</span> <span class="hljs-comment"># Needs to be the same as the step size of the environment</span>
+<span class="hljs-attr">      ttl:</span> <span class="hljs-number">80</span> <span class="hljs-comment"># Time to live of winzent messages</span>
+<span class="hljs-attr">      time_to_sleep:</span> <span class="hljs-number">10</span>
+<span class="hljs-attr">      factor_mw:</span> <span class="hljs-number">1000000</span> <span class="hljs-comment"># factor to mupltiply the p_mw values with</span>
+<span class="hljs-attr">      number_of_restartable_negotiations:</span> <span class="hljs-number">40</span> <span
+            class="hljs-comment"># times winzent will try to restart a negotiation if it fails</span>
+<span class="hljs-attr">      send_message_paths:</span> <span class="hljs-literal">True</span> <span
+            class="hljs-comment"># if True, Winzent will use the paths of the messages to determine the next hop</span>
+<span class="hljs-attr">  objective:</span>
+<span class="hljs-attr">    name:</span> palaestrai.agent.dummy_objective:DummyObjective
+<span class="hljs-attr">    params:</span> { <span class="hljs-string">"params"</span>: <span
+            class="hljs-number">1</span> }
+<span class="hljs-attr">  sensors:</span>
+    <span class="hljs-comment"># grid json (needed for topology)</span>
+<span class="hljs-bullet">    -</span> env.Powergrid<span class="hljs-bullet">-0.</span>Grid<span class="hljs-bullet">-0.</span>grid_json
+    <span class="hljs-comment"># loads (indices 0-39): p_mw</span>
+<span class="hljs-bullet">    -</span> env.Powergrid<span class="hljs-bullet">-0.0</span>-load<span class="hljs-bullet">-0</span><span
+            class="hljs-bullet">-15.</span>p_mw
+<span class="hljs-bullet">    -</span> env.Powergrid<span class="hljs-bullet">-0.0</span>-load<span class="hljs-bullet">-1</span><span
+            class="hljs-bullet">-17.</span>p_mw
+    <span class="hljs-comment"># [...]</span>
+<span class="hljs-bullet">    -</span> env.Powergrid<span class="hljs-bullet">-0.0</span>-load<span class="hljs-bullet">-39</span><span
+            class="hljs-bullet">-80.</span>p_mw
+    <span class="hljs-comment"># sgens (indices 0-24): p_mw_flex</span>
+<span class="hljs-bullet">    -</span> env.Powergrid<span class="hljs-bullet">-0.0</span>-sgen<span class="hljs-bullet">-0</span><span
+            class="hljs-bullet">-16.</span>p_mw_flex
+<span class="hljs-bullet">    -</span> env.Powergrid<span class="hljs-bullet">-0.0</span>-sgen<span class="hljs-bullet">-1</span><span
+            class="hljs-bullet">-17.</span>p_mw_flex
+    <span class="hljs-comment"># [...]</span>
+<span class="hljs-bullet">    -</span> env.Powergrid<span class="hljs-bullet">-0.0</span>-sgen<span class="hljs-bullet">-24</span><span
+            class="hljs-bullet">-80.</span>p_mw_flex
+<span class="hljs-attr">  actuators:</span>
+    <span class="hljs-comment"># sgens (indices 0-24): scaling</span>
+<span class="hljs-bullet">    -</span> env.Powergrid<span class="hljs-bullet">-0.0</span>-sgen<span class="hljs-bullet">-0</span><span
+            class="hljs-bullet">-16.</span>scaling
+<span class="hljs-bullet">    -</span> env.Powergrid<span class="hljs-bullet">-0.0</span>-sgen<span class="hljs-bullet">-1</span><span
+            class="hljs-bullet">-17.</span>scaling
+    <span class="hljs-comment"># [...]</span>
+<span class="hljs-bullet">    -</span> env.Powergrid<span class="hljs-bullet">-0.0</span>-sgen<span class="hljs-bullet">-24</span><span
+            class="hljs-bullet">-80.</span>scaling
+</code></pre>
+<h5 id="helper-agents">Helper Agents</h5>
+<p>There are some simple helper agents available, that can be used to explore the environment or as a baseline in
+    competitions.<br>The palaestrAI-Dummy-Agent samples a random action for each actuator from its action space.
+    Agent-Configuration (without sensors and actuators):</p>
+<pre><code class="lang-yaml"><span class="hljs-attribute">brain</span>:
+  <span class="hljs-attribute">name</span>: palaestrai.agent.<span class="hljs-attribute">dummy_brain</span>:DummyBrain
+  <span class="hljs-attribute">params</span>: {}
+<span class="hljs-attribute">muscle</span>:
+  <span class="hljs-attribute">name</span>: palaestrai.agent.<span class="hljs-attribute">dummy_muscle</span>:DummyMuscle
+  <span class="hljs-attribute">params</span>: {}
+<span class="hljs-attribute">objective</span>:
+  <span class="hljs-attribute">name</span>: palaestrai.agent.<span class="hljs-attribute">dummy_objective</span>:DummyObjective
+  <span class="hljs-attribute">params</span>: {<span class="hljs-string">"params"</span>: <span
+            class="hljs-number">1</span>}
+</code></pre>
+<p>The Set-Nothing-Agent does nothing. Muscle-Configuration (<code>brain</code> and <code>objective</code> can be Dummy-
+    as above):</p>
+<pre><code class="lang-yaml"><span class="hljs-selector-tag">muscle</span>:
+  <span class="hljs-selector-tag">name</span>: <span class="hljs-selector-tag">pgasc</span><span
+            class="hljs-selector-class">.agents</span><span
+            class="hljs-selector-class">.palaestrai_test_agents</span><span
+            class="hljs-selector-class">.muscles</span><span class="hljs-selector-pseudo">:SetNothingMuscle</span>
+  <span class="hljs-selector-tag">params</span>: {}
+</code></pre>
+<p>The Setpoint-Agent sets all actuators to the given <code>setpoint</code>-parameter:</p>
+<pre><code class="lang-yaml"><span class="hljs-attribute">muscle</span>:
+  <span class="hljs-attribute">name</span>: pgasc.agents.palaestrai_test_agents.<span
+            class="hljs-attribute">muscles</span>:SetpointMuscle
+  <span class="hljs-attribute">params</span>: { <span class="hljs-string">"setpoint"</span>: <span class="hljs-number">0.5</span> }
+</code></pre>
+<p>The Save-Values-Agent saves its inputs in a file (only usable as defender): </p>
+<pre><code class="lang-yaml"><span class="hljs-selector-tag">muscle</span>:
+  <span class="hljs-selector-tag">name</span>: <span class="hljs-selector-tag">pgasc</span><span
+            class="hljs-selector-class">.agents</span><span
+            class="hljs-selector-class">.palaestrai_test_agents</span><span
+            class="hljs-selector-class">.muscles</span><span class="hljs-selector-pseudo">:SaveValuesMuscle</span>
+  <span class="hljs-selector-tag">params</span>: {}
+</code></pre>
+<h3 id="example-erds">Example-ERDs</h3>
+<p>Finally, there are some example Experiment Run Documents which can be downloaded:</p>
+<ul>
+    <li><a href="/static/howto_files/erd_uploaded_agent.yml">erd_uploaded_agent.yml</a> ERD to use with a custom
+        uploaded agent
+    </li>
+    <li><a href="/static/howto_files/erd_winzent_only.yml">erd_winzent_only.yml</a> ERD with a Winzent agent</li>
+    <li><a href="/static/howto_files/erd_harl_ddpg.yml">erd_harl_ddpg.yml</a> ERD with a PGASC-hARL-DDPG-Agent (without
+        sensors and actuators)
+    </li>
+    <li><a href="/static/howto_files/erd_harl_ddpg_any_sensor_actuator_once.yml">erd_harl_ddpg_any_sensor_actuator_once.yml</a>
+        ERD with
+        a PGASC-hARL-DDPG-Agent with examples of all sensors and actuators
+    </li>
+    <li><a href="/static/howto_files/erd_harl_ddpg_different_actuators_training.yml">erd_harl_ddpg_different_actuators_training.yml</a>
+        ERD with a PGASC-hARL-DDPG-Agent where attacker and defender use different actuators with mode
+        <code>training</code></li>
+    <li><a href="/static/howto_files/erd_harl_ddpg_different_actuators_test.yml">erd_harl_ddpg_different_actuators_test.yml</a>
+        ERD with a PGASC-hARL-DDPG-Agent where attacker and defender use different actuators with mode <code>test</code>
+    </li>
+    <li><a href="/static/howto_files/erd_harl_ddpg_same_actuators_attacker_priority.yml">erd_harl_ddpg_same_actuators_attacker_priority.yml</a>
+        ERD with a PGASC-hARL-DDPG-Agent where attacker and defender use the same actuators and attacker has priority
+    </li>
+    <li><a href="/static/howto_files/erd_harl_ppo.yml">erd_harl_ppo.yml</a> ERD with a PGASC-hARL-PPO-Agent (without
+        sensors and actuators)
+    </li>
+    <li><a href="/static/howto_files/erd_harl_sac.yml">erd_harl_sac.yml</a> ERD with a PGASC-hARL-SAC-Agent (without
+        sensors and actuators)
+    </li>
+    <li><a href="/static/howto_files/erd_harl_td3.yml">erd_harl_td3.yml</a> ERD with a PGASC-hARL-TD3-Agent (without
+        sensors and actuators)
+    </li>
+    <li><a href="/static/howto_files/erd_save_sensor_values.yml">erd_save_sensor_values.yml</a> ERD with a
+        Save-Values-Agent, which saves its sensor values in a file
+    </li>
+    <li><a href="/static/howto_files/erd_with_scenario.yml">erd_with_scenario.yml</a> ERD containing an example scenario
+    </li>
+</ul>

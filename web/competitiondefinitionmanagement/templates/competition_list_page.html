@@ -1,0 +1,51 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Competitions | PG-ASC Competition Server{% endblock %}
+
+{% block custom_style %}
+    <link href="{% static 'css/lists.css' %}" rel=stylesheet>
+    <style>
+        #content {
+            background: #eee
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+    <div class="container p-5">
+        <div class="row">
+            <h1>Competition list</h1>
+        </div>
+        {% if user.is_authenticated %}
+            <div class="row">
+                <div class="col">
+                    <a class="btn btn-outline-primary"
+                       href="{% url 'competitiondefinitionmanagement:competitioncreate' %}"
+                       role="button">Create new Competition</a>
+                </div>
+                <div class="col" style="text-align: end;">
+                    <input class="form-check-input" type="checkbox" id="checkbox_autoreload"
+                           onclick="changeAutoreload(
+                                   '{% url 'set_list_autoreload' %}',
+                                   '{{ csrf_token }}'
+                                   )"
+                            {% if user.list_autoreload %} checked {% endif %}>
+                    <label class="form-check-label" for="checkbox_autoreload">Autoreload</label>
+                </div>
+            </div>
+        {% endif %}
+        <div id="competitionlist">
+            {% include "competition_list.html" %}
+        </div>
+    </div>
+{% endblock %}
+
+{% block js_block %}
+    <script type="application/javascript" src="{% static 'javascript/list_auto_reload.js' %}" defer></script>
+    <script>
+        $(document).ready(function () {
+            activateAutoreload("{% url 'competitiondefinitionmanagement:ajax_competitionlist' %}", "#competitionlist")
+        });
+    </script>
+{% endblock %}

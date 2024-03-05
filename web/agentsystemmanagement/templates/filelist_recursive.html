@@ -1,0 +1,10 @@
+{% for child in agent_files.children %}
+    <li>
+        {{ child.name }}
+    </li>
+    {% if child.type == "directory" %}
+        <ul>
+            {% include "filelist_recursive.html" with agent_files=child %}
+        </ul>
+    {% endif %}
+{% endfor %}

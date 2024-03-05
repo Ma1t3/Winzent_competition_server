@@ -1,0 +1,139 @@
+<div class="mt-3">
+    <ul class="list list-inline">
+        {% if competitions %}
+            {% for competition in competitions %}
+                <li class="d-flex justify-content-between">
+                    <div class="d-flex flex-row align-items-center" style="flex-basis:25%;word-wrap: anywhere;">
+                        <div class="ml-2">
+                            <h6 class="mb-0">
+                                <a href="{% url 'competitiondefinitionmanagement:competitiondetails' competition.id %}">
+                                    <!--Competition Detail url -->
+                                    {{ competition.name }}
+                                </a>
+                            </h6>
+                            <div class="d-flex flex-row mt-1 text-black-50 date-time">
+                                <div>
+                                            <span class="ml-2">on
+                                                {{ competition.timestamp_created | date:'d.m.Y H:i' }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {% if competition.is_public == True %}
+                        <div class="d-flex flex-column mr-2">
+                            <i class="bi bi-globe2 text-center"></i>
+                            <div class="text-black-50 date-time text-center">
+                                            <span class="ml-2">&NonBreakingSpace;Uploaded by
+                                                {% if user.is_authenticated and user.username == competition.owner.username %}
+                                                    <b>you</b>
+                                                {% else %} <b>{{ competition.owner.username }}</b>
+                                                {% endif %}
+                                            </span>
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="d-flex flex-row align-items-center"
+                         style="flex-basis:25%; word-wrap: anywhere;">
+
+                        <!-- Download Button -->
+                        <a class="btn btn2" title="Download"
+                           href="{% url 'competitiondefinitionmanagement:download' competition.id %}">
+                            <i class="bi bi-download fa-lg"></i>
+                        </a>
+
+                        <!-- Copy Button -->
+                        {% if user.is_authenticated and competition.is_public or user.id == competition.owner_id %}
+                            <form action="{% url 'competitiondefinitionmanagement:competitioncopy' competition.id %}"
+                                  method="get" style="display: inline;">
+                                <button class="btn btn2" title="Duplicate"><i
+                                        class="bi bi-clipboard-plus fa-lg"></i></button>
+                            </form>
+                        {% endif %}
+
+                        <div class="vr action-icons" style="margin-left: 30px; margin-right: 30px"></div>
+
+                        <div class="buttons">
+                            {% if user.id == competition.owner_id and competition.attacker_count > 0 and competition.defender_count > 0 %}
+
+                                {% if competition.status == 'created' %}
+                                    <a href="{% url 'experimentexecutionmanagement:competition_start' %}?competition={{ competition.id }}">
+                                        <button class="btn btn-primary" style="width: 135px;"
+                                                title="Competition is created and ready to start" type="button">
+                                            <i class="bi bi-play-circle-fill"> Start</i>
+                                        </button>
+                                    </a>
+                                {% elif competition.status == 'running' and not competition.aborted_by_user %}
+                                    <a href="{% url 'experimentexecutionmanagement:competition_abort' %}?competition={{ competition.id }}"
+                                       onclick="return confirm('Are you sure you want to abort?')">
+                                        <button class="btn btn-warning" title="Competition is running!"
+                                                type="button">
+                                            <i class="bi bi-stop-circle"> Running</i>
+                                        </button>
+                                    </a>
+
+                                {% elif competition.status == 'enqueued' and not competition.aborted_by_user %}
+                                    <a href="{% url 'experimentexecutionmanagement:competition_abort' %}?competition={{ competition.id }}"
+                                       onclick="return confirm('Are you sure you want to abort?')">
+                                        <button class="btn btn-warning" title="Competition is in queue!"
+                                                type="button">
+                                            <i class="bi bi-stop-circle"> Pending</i>
+                                        </button>
+                                    </a>
+
+                                {% elif competition.status == 'enqueued' and competition.aborted_by_user or competition.status == 'running' and competition.aborted_by_user %}
+                                    <div style="width: 135px; text-align: center; color: red">
+                                        <i class="bi bi-x-circle"> Aborting </i>
+                                    </div>
+
+                                {% endif %}
+
+                            {% else %}
+
+                                {% if competition.status == 'created' %}
+                                    <div style="width: 135px; text-align: center">
+                                        <i class="bi bi-plus-circle"> Created </i>
+                                    </div>
+                                {% elif competition.status == 'running' %}
+                                    <div style="width: 135px; text-align: center; color: #dca200">
+                                        <i class="bi bi-arrow-clockwise"> Running</i>
+                                    </div>
+                                {% elif competition.status == 'enqueued' %}
+                                    <div style="width: 135px; text-align: center; color: #dca200">
+                                        <i class="bi bi-hourglass"> Pending</i>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+
+                            {% if competition.status == 'completed' %}
+                                <div style="width: 135px; text-align: center; color: #228B22">
+                                    <i class="bi bi-check2-circle"> Finished</i>
+                                </div>
+
+                            {% elif competition.status == 'aborted' %}
+                                <div style="width: 135px; text-align: center; color: red">
+                                    <i class="bi bi-x-circle"> Aborted</i>
+                                </div>
+
+                            {% elif competition.status == 'failed' %}
+                                <div style="width: 135px; text-align: center; color: red">
+                                    <i class="bi bi-x-circle"> Failed</i>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </li>
+            {% endfor %}
+        {% else %}
+            <li class="d-flex justify-content-between">
+                <div class="d-flex flex-row align-items-center">
+                    <div class="ml-2">
+                        <h6 class="mb-0">No Competition found</h6>
+                    </div>
+                </div>
+            </li>
+        {% endif %}
+    </ul>
+</div>

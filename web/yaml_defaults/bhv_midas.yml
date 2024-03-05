@@ -1,0 +1,101 @@
+#######################################################################
+# Bremerhaven MV Base
+#######################################################################
+bhv_palaestrai:
+  parent:
+  modules:
+    - powergrid
+    - dlpdata
+    - pwdata
+    - wcdata
+  with_db: True
+  step_size: 15*60
+  start_date: 2017-01-01 00:00:00+0100
+  end: 1*24*60*60
+  mosaikdb_params:
+    import_str: pgasc.midas.store.midas_postgresql:MidasPostgresql
+    write_in_database: True
+  powergrid_params:
+    constraint: False
+    save_grid_json: True
+    save_constraints: True
+    bremerhaven:
+      gridfile: pgasc.midas.grid.bhv.build_grid
+    scenario: [ ]
+  pwdata_params:
+    bremerhaven:
+      scaling: 1.0
+      peak_mapping:
+        16: [ [ Wind, 5, 0.91 ] ] # Windpark Speckenbüttel 2
+        17: [ [ PV, 0.03, 0.91 ] ] # PV Weddewarden
+        20: [ [ PV, 0.41, 0.91 ] ] # PV Lehe - 0
+        22: [ [ Wind, 5, 0.91 ] ] # Windpark Speckenbüttel 1
+        23: [ [ Wind, 5, 0.91 ] ] # Windpark Multibrid
+        25: [ [ PV, 0.83, 0.91 ] ] # PV PV Geesemünde - 0
+        28: [ [ PV, 0.44, 0.91 ] ] # PV Lehe - 1
+        30: [ [ PV, 0.49, 0.91 ] ] # PV Lehe - 2
+        33: [ [ PV, 0.83, 0.91 ] ] # PV Geesemünde - 1
+        35: [ [ PV, 0.45, 0.91 ] ] # PV Lehe - 3
+        37: [ [ PV, 0.44, 0.91 ] ] # PV Lehe - 4
+        39: [ [ Wind, 5, 0.91 ] ] # Windpark Repower
+        40: [ [ PV, 0.46, 0.91 ] ] # PV Leherheide
+        43: [ [ Wind, 10, 0.91 ] ] # Windpark Lehe
+        45: [ [ PV, 0.13, 0.91 ] ] # PV Schiffdorferdamm
+        50: [ [ PV, 0.33, 0.91 ] ] # PV Mitte - 0
+        53: [ [ PV, 0.33, 0.91 ] ] # PV Wulsdorf - 0
+        57: [ [ PV, 0.16, 0.91 ] ] # PV Surheide
+        63: [ [ PV, 0.32, 0.91 ] ] # PV Mitte - 1
+        65: [ [ PV, 0.28, 0.91 ] ] # PV Leherheide - 1
+        67: [ [ PV, 0.25, 0.91 ] ] # PV Wulsdorf - 1
+        71: [ [ PV, 0.83, 0.91 ] ] # PV Geesemünde - 2
+        80: [ [ PV, 0.01, 0.91 ] ] # PV Fischereihafen
+  dlpdata_params:
+    bremerhaven:
+      scaling: 1.0
+      mapping:
+        15: [ [ G4, 262.8, 0.97 ] ] # Weddewarden Industrielast
+        17: [ [ H0, 1038.06, 0.97 ] ] # Weddewarden Households
+        19: [ [ G4, 17103.9, 0.97 ] ] # Lehe Industrielast
+        20: [ [ H0, 14454.0, 0.97 ] ] # Lehe Households - 0
+        24: [ [ G4, 15067.2, 0.97 ] ] # Geestemünde Industrielast
+        25: [ [ H0, 15111, 0.97 ] ] # Geestemünde Households - 0
+        28: [ [ H0, 13271.4, 0.97 ] ] # Lehe Households - 1
+        30: [ [ H0, 14454, 0.97 ] ] # Lehe Households - 2
+        32: [ [ G1, 175.2, 0.97 ] ] # Erdgas Kronos Titan GmbH
+        33: [ [ H0, 18615, 0.97 ] ] # Geestemünde Households - 1
+        35: [ [ H0, 13140, 0.97 ] ] # Lehe Households - 3
+        37: [ [ H0, 13140, 0.97 ] ] # Lehe Households - 4
+        40: [ [ H0, 16206, 0.97 ] ] # Leherheide Households - 0
+        44: [ [ G3, 4108.44, 0.97 ] ] # Klinikum Bremerhaven
+        45: [ [ H0, 4568.34, 0.97 ] ] # Schifferdorferdamm Households
+        47: [ [ G4, 1165.08, 0.97 ] ] # Schifferdorferdamm Industrielast
+        48: [ [ G4, 2365.2, 0.97 ] ] # Eisarena, Stadthalle
+        49: [ [ G4, 5676.48, 0.97 ] ] # Mitte Industrielast
+        50: [ [ H0, 11169, 0.97 ] ] # Mitte Households - 0
+        52: [ [ G4, 7450.38, 0.97 ] ] # Leherheide Industrielast
+        53: [ [ H0, 11388, 0.97 ] ] # Wulsdorf Households - 0
+        56: [ [ G4, 1362.18, 0.97 ] ] # Surheide Industrielast
+        57: [ [ H0, 5343.6, 0.97 ] ] # Surheide Households
+        59: [ [ G3, 1226.4, 0.97 ] ] # AMEOS Klinikum Am Bürgerpark
+        60: [ [ G4, 1554.9, 0.97 ] ] # Innenstadt
+        61: [ [ G3, 1182.6, 0.97 ] ] # Zoo
+        62: [ [ G3, 1033.68, 0.97 ] ] # AMEOS Klinikum Mitte
+        63: [ [ H0, 11169, 0.97 ] ] # Mitte Households - 1
+        65: [ [ H0, 9636, 0.97 ] ] # Leherheide Households - 1
+        67: [ [ H0, 8760, 0.97 ] ] # Wulsdorf Households - 1
+        69: [ [ G4, 87.6, 0.97 ] ] # Fischereihafen Industrielast
+        70: [ [ G4, 5150.88, 0.97 ] ] # Wulsdorf Industrielast
+        71: [ [ H0, 12702, 0.97 ] ] # Geestemünde Households - 2
+        73: [ [ G4, 2334.54, 0.97 ] ] # Bremerhaven Süd
+        74: [ [ G3, 1095, 0.97 ] ] # Fischereihafen - 4
+        75: [ [ G3, 1095, 0.97 ] ] # Fischereihafen - 3
+        76: [ [ G3, 1095, 0.97 ] ] # Fischereihafen - 2
+        77: [ [ G3, 1095, 0.97 ] ] # Fischereihafen - 1
+        78: [ [ G3, 1095, 0.97 ] ] # Fischereihafen - 0
+        80: [ [ H0, 341.64, 0.97 ] ] # Fischereihafen - Households
+  wcdata_params:
+    bremerhaven:
+      scaling: 1.0
+      peak_mapping:
+        32: [ [ CCGT, 4.450646, 0.91 ] ] # CCGT
+        55: [ [ WIP, 8.894828, 0.91 ] ] # WIP

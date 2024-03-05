@@ -1,0 +1,77 @@
+{% load static %}
+{% load active_link_tags %}
+
+<div class="d-flex flex-column flex-shrink-0 p-3 text-white bg-dark" style="height: 100vh;">
+    <a href="{% url 'home' %}"
+       class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+        <img src="{% static 'images/favicon.png' %}" alt="" width="32" height="32" style="margin: 12px">
+        <span class="fs-4">PG-ASC Competition Server</span>
+    </a>
+    <hr>
+    <ul class="nav nav-pills flex-column mb-auto">
+        <li class="nav-item">
+            <a href="{% url 'home' %}" class="nav-link text-white {% active_link 'home' strict=True %}"
+               aria-current="page">
+                <i class="bi-house"></i>
+                &nbsp;Home
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'pgasc.web.agentsystemmanagement:agent_list' %}"
+               class="nav-link text-white {% active_link 'pgasc.web.agentsystemmanagement:agent_list' strict=True %}">
+                <i class="bi-person-bounding-box"></i>
+                &nbsp;Agent Systems
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'experimentdefinitionmanagement:experimentlist' %}"
+               class="nav-link text-white {% active_link 'experimentdefinitionmanagement:experimentlist' strict=True %}">
+                <i class="bi-card-list"></i>
+                &nbsp;Experiments
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'competitiondefinitionmanagement:competitionlist' %}"
+               class="nav-link text-white {% active_link 'competitiondefinitionmanagement:competitionlist' strict=True %}">
+                <i class="bi-trophy-fill"></i>
+                &nbsp;Competitions
+            </a>
+        </li>
+
+        <li>
+            <a href="{% url 'howto' %}" class="nav-link text-white {% active_link 'howto' strict=True %}">
+                <i class="bi-info-circle"></i>
+                &nbsp;How To
+            </a>
+        </li>
+    </ul>
+    <hr>
+    {% if user.is_authenticated %}
+        <div class="dropdown">
+            <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+               id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="{% static 'images/person-circle.svg' %}" alt="" width="32" height="32"
+                     class="rounded-circle me-2">
+                <strong>{{ user.username }}</strong>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-dark text-small shadow" aria-labelledby="dropdownUser1">
+                <li><a class="dropdown-item" href="{% url 'logout' %}">Logout</a></li>
+            </ul>
+        </div>
+    {% else %}
+        <div class="dropdown">
+            <a href="{% url 'login' %}" class="d-flex align-items-center text-white text-decoration-none">
+                <i class="bi bi-box-arrow-in-left"></i>
+                <strong>&nbsp;Login</strong>
+            </a>
+
+            <a href="{% url 'register' %}" class="d-flex align-items-center text-white text-decoration-none">
+                <i class="bi bi-person-plus"></i>
+                <strong>&nbsp;Register</strong>
+            </a>
+        </div>
+    {% endif %}
+</div>

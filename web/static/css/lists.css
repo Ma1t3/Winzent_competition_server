@@ -1,0 +1,58 @@
+.icons i {
+    color: #b5b3b3;
+    border: 1px solid #b5b3b3;
+    padding: 6px;
+    margin-left: 4px;
+    border-radius: 5px;
+    cursor: pointer
+}
+
+.list-group li {
+    margin-bottom: 12px
+}
+
+.flex-box {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+a {
+    color: black;
+    text-decoration: none;
+
+}
+
+.list li {
+    list-style: none;
+    padding: 10px;
+    border: 1px solid #e3dada;
+    margin-top: 12px;
+    border-radius: 5px;
+    background: #fff
+}
+
+.date-time {
+    font-size: 12px
+}
+
+.buttons {
+    margin-right: 12px;
+}
+
+.disabled {
+    color: #bdbdbd;
+}
+
+.btn2 {
+    padding: .0rem .0rem;
+    margin: 6px;
+}
+
+.buttons button {
+    width: 135px;
+}
+
+.no-italics {
+    font-style: normal;
+}

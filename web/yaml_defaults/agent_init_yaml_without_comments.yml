@@ -1,0 +1,11 @@
+brain:
+  name: dummy_brain:DummyBrain
+  params: { "key": "value" }
+muscle:
+  name: dummy_muscle:DummyMuscle
+  params: { }
+objective:
+  name: dummy_objective:DummyObjective
+  params: { }
+sensors: [ ]
+actuators: [ ]

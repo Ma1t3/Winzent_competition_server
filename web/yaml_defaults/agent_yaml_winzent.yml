@@ -1,0 +1,112 @@
+brain:
+  name: palaestrai.agent.dummy_brain:DummyBrain
+  params: { }
+muscle:
+  name: pgasc.agents.winzent_agent_system.muscle:WinzentMuscle
+  params:
+    step_size: 900 # Needs to be the same as the step size of the environment
+    ttl: 80 # Time to live of winzent messages
+    time_to_sleep: 10
+    factor_mw: 1000000 # factor to mupltiply the p_mw values with
+    number_of_restartable_negotiations: 40 # times winzent will try to restart a negotiation if it fails
+    send_message_paths: True # if True, Winzent will use the paths of the messages to determine the next hop
+objective:
+  name: palaestrai.agent.dummy_objective:DummyObjective
+  params: { "params": 1 }
+sensors:
+  # grid json (needed for topology)
+  - env.Powergrid-0.Grid-0.grid_json
+  # loads (indices 0-39): p_mw
+  - env.Powergrid-0.0-load-0-15.p_mw
+  - env.Powergrid-0.0-load-1-17.p_mw
+  - env.Powergrid-0.0-load-2-19.p_mw
+  - env.Powergrid-0.0-load-3-20.p_mw
+  - env.Powergrid-0.0-load-4-24.p_mw
+  - env.Powergrid-0.0-load-5-25.p_mw
+  - env.Powergrid-0.0-load-6-28.p_mw
+  - env.Powergrid-0.0-load-7-30.p_mw
+  - env.Powergrid-0.0-load-8-32.p_mw
+  - env.Powergrid-0.0-load-9-33.p_mw
+  - env.Powergrid-0.0-load-10-35.p_mw
+  - env.Powergrid-0.0-load-11-37.p_mw
+  - env.Powergrid-0.0-load-12-40.p_mw
+  - env.Powergrid-0.0-load-13-44.p_mw
+  - env.Powergrid-0.0-load-14-45.p_mw
+  - env.Powergrid-0.0-load-15-47.p_mw
+  - env.Powergrid-0.0-load-16-48.p_mw
+  - env.Powergrid-0.0-load-17-49.p_mw
+  - env.Powergrid-0.0-load-18-50.p_mw
+  - env.Powergrid-0.0-load-19-52.p_mw
+  - env.Powergrid-0.0-load-20-53.p_mw
+  - env.Powergrid-0.0-load-21-56.p_mw
+  - env.Powergrid-0.0-load-22-57.p_mw
+  - env.Powergrid-0.0-load-23-59.p_mw
+  - env.Powergrid-0.0-load-24-60.p_mw
+  - env.Powergrid-0.0-load-25-61.p_mw
+  - env.Powergrid-0.0-load-26-62.p_mw
+  - env.Powergrid-0.0-load-27-63.p_mw
+  - env.Powergrid-0.0-load-28-65.p_mw
+  - env.Powergrid-0.0-load-29-67.p_mw
+  - env.Powergrid-0.0-load-30-69.p_mw
+  - env.Powergrid-0.0-load-31-70.p_mw
+  - env.Powergrid-0.0-load-32-71.p_mw
+  - env.Powergrid-0.0-load-33-73.p_mw
+  - env.Powergrid-0.0-load-34-74.p_mw
+  - env.Powergrid-0.0-load-35-75.p_mw
+  - env.Powergrid-0.0-load-36-76.p_mw
+  - env.Powergrid-0.0-load-37-77.p_mw
+  - env.Powergrid-0.0-load-38-78.p_mw
+  - env.Powergrid-0.0-load-39-80.p_mw
+  # sgens (indices 0-24): p_mw_flex
+  - env.Powergrid-0.0-sgen-0-16.p_mw_flex
+  - env.Powergrid-0.0-sgen-1-17.p_mw_flex
+  - env.Powergrid-0.0-sgen-2-20.p_mw_flex
+  - env.Powergrid-0.0-sgen-3-22.p_mw_flex
+  - env.Powergrid-0.0-sgen-4-23.p_mw_flex
+  - env.Powergrid-0.0-sgen-5-25.p_mw_flex
+  - env.Powergrid-0.0-sgen-6-28.p_mw_flex
+  - env.Powergrid-0.0-sgen-7-30.p_mw_flex
+  - env.Powergrid-0.0-sgen-8-32.p_mw_flex
+  - env.Powergrid-0.0-sgen-9-33.p_mw_flex
+  - env.Powergrid-0.0-sgen-10-35.p_mw_flex
+  - env.Powergrid-0.0-sgen-11-37.p_mw_flex
+  - env.Powergrid-0.0-sgen-12-39.p_mw_flex
+  - env.Powergrid-0.0-sgen-13-40.p_mw_flex
+  - env.Powergrid-0.0-sgen-14-43.p_mw_flex
+  - env.Powergrid-0.0-sgen-15-45.p_mw_flex
+  - env.Powergrid-0.0-sgen-16-50.p_mw_flex
+  - env.Powergrid-0.0-sgen-17-53.p_mw_flex
+  - env.Powergrid-0.0-sgen-18-55.p_mw_flex
+  - env.Powergrid-0.0-sgen-19-57.p_mw_flex
+  - env.Powergrid-0.0-sgen-20-63.p_mw_flex
+  - env.Powergrid-0.0-sgen-21-65.p_mw_flex
+  - env.Powergrid-0.0-sgen-22-67.p_mw_flex
+  - env.Powergrid-0.0-sgen-23-71.p_mw_flex
+  - env.Powergrid-0.0-sgen-24-80.p_mw_flex
+actuators:
+  # sgens (indices 0-24): scaling
+  - env.Powergrid-0.0-sgen-0-16.scaling
+  - env.Powergrid-0.0-sgen-1-17.scaling
+  - env.Powergrid-0.0-sgen-2-20.scaling
+  - env.Powergrid-0.0-sgen-3-22.scaling
+  - env.Powergrid-0.0-sgen-4-23.scaling
+  - env.Powergrid-0.0-sgen-5-25.scaling
+  - env.Powergrid-0.0-sgen-6-28.scaling
+  - env.Powergrid-0.0-sgen-7-30.scaling
+  - env.Powergrid-0.0-sgen-8-32.scaling
+  - env.Powergrid-0.0-sgen-9-33.scaling
+  - env.Powergrid-0.0-sgen-10-35.scaling
+  - env.Powergrid-0.0-sgen-11-37.scaling
+  - env.Powergrid-0.0-sgen-12-39.scaling
+  - env.Powergrid-0.0-sgen-13-40.scaling
+  - env.Powergrid-0.0-sgen-14-43.scaling
+  - env.Powergrid-0.0-sgen-15-45.scaling
+  - env.Powergrid-0.0-sgen-16-50.scaling
+  - env.Powergrid-0.0-sgen-17-53.scaling
+  - env.Powergrid-0.0-sgen-18-55.scaling
+  - env.Powergrid-0.0-sgen-19-57.scaling
+  - env.Powergrid-0.0-sgen-20-63.scaling
+  - env.Powergrid-0.0-sgen-21-65.scaling
+  - env.Powergrid-0.0-sgen-22-67.scaling
+  - env.Powergrid-0.0-sgen-23-71.scaling
+  - env.Powergrid-0.0-sgen-24-80.scaling
